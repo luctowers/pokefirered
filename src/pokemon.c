@@ -3,6 +3,7 @@
 #include "global.h"
 #include "gflib.h"
 #include "random.h"
+#include "randomizer.h"
 #include "text.h"
 #include "data.h"
 #include "battle.h"
@@ -2240,30 +2241,15 @@ static void GiveBoxMonInitialMoveset(struct BoxPokemon *boxMon)
 u16 MonTryLearningNewMove(struct Pokemon *mon, bool8 firstMove)
 {
     u32 retVal = 0;
+    u32 randomLearnAttempts = 0;
     u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-    u8 level = GetMonData(mon, MON_DATA_LEVEL, NULL);
 
-    // since you can learn more than one move per level
-    // the game needs to know whether you decided to
-    // learn it or keep the old set to avoid asking
-    // you to learn the same move over and over again
-    if (firstMove)
-    {
-        sLearningMoveTableID = 0;
-
-        while ((gLevelUpLearnsets[species][sLearningMoveTableID] & 0xFE00) != (level << 9))
-        {
-            sLearningMoveTableID++;
-            if (gLevelUpLearnsets[species][sLearningMoveTableID] == LEVEL_UP_END)
-                return 0;
-        }
-    }
-
-    if ((gLevelUpLearnsets[species][sLearningMoveTableID] & 0xFE00) == (level << 9))
-    {
-        gMoveToLearn = (gLevelUpLearnsets[species][sLearningMoveTableID] & 0x1FF);
-        sLearningMoveTableID++;
-        retVal = GiveMoveToMon(mon, gMoveToLearn);
+    if (firstMove) {
+        do {
+            gMoveToLearn = randomSpeciesMove(species);
+            retVal = GiveMoveToMon(mon, gMoveToLearn);
+            randomLearnAttempts++;
+        } while (retVal == MON_ALREADY_KNOWS_MOVE && randomLearnAttempts < 256);
     }
 
     return retVal;
