@@ -272,6 +272,7 @@ static bool8 TryGenerateWildMon(const struct WildPokemonInfo * info, u8 area, u8
 {
     u8 slot = 0;
     u8 level;
+    u16 randomizedSpecies;
     switch (area)
     {
     case WILD_AREA_LAND:
@@ -289,7 +290,11 @@ static bool8 TryGenerateWildMon(const struct WildPokemonInfo * info, u8 area, u8
     {
         return FALSE;
     }
-    GenerateWildMon(info->wildPokemon[slot].species, level, slot);
+    randomizedSpecies = 1 + Random() % 386;
+    if (randomizedSpecies > SPECIES_CELEBI) {
+        randomizedSpecies += 25;
+    }
+    GenerateWildMon(randomizedSpecies, level, slot);
     return TRUE;
 }
 
