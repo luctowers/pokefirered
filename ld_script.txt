@@ -75,6 +75,7 @@ SECTIONS {
         src/pokemon.o(.text);
         src/trig.o(.text);
         src/random.o(.text);
+        src/randomizer.o(.text);
         src/util.o(.text);
         src/blend_palette.o(.text);
         src/daycare.o(.text);

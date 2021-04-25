@@ -1,5 +1,6 @@
 #include "global.h"
 #include "random.h"
+#include "randomizer.h"
 #include "wild_encounter.h"
 #include "event_data.h"
 #include "fieldmap.h"
@@ -272,7 +273,6 @@ static bool8 TryGenerateWildMon(const struct WildPokemonInfo * info, u8 area, u8
 {
     u8 slot = 0;
     u8 level;
-    u16 randomizedSpecies;
     switch (area)
     {
     case WILD_AREA_LAND:
@@ -290,11 +290,7 @@ static bool8 TryGenerateWildMon(const struct WildPokemonInfo * info, u8 area, u8
     {
         return FALSE;
     }
-    randomizedSpecies = 1 + Random() % 386;
-    if (randomizedSpecies > SPECIES_CELEBI) {
-        randomizedSpecies += 25;
-    }
-    GenerateWildMon(randomizedSpecies, level, slot);
+    GenerateWildMon(randomSpecies(), level, slot);
     return TRUE;
 }
 
