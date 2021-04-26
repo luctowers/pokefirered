@@ -9,6 +9,22 @@
 #include "data/pokemon/tmhm_learnsets.h"
 #include "data/pokemon/tutor_learnsets.h"
 
+static const u16 BANNED_MOVES[] = {
+    MOVE_DOUBLE_TEAM,
+    MOVE_MINIMIZE,
+    MOVE_PROTECT,
+    MOVE_RETURN,
+    MOVE_ATTRACT,
+    MOVE_FRUSTRATION,
+    MOVE_HIDDEN_POWER,
+    MOVE_SECRET_POWER,
+    MOVE_REST,
+    MOVE_FISSURE,
+    MOVE_GUILLOTINE,
+    MOVE_SHEER_COLD,
+    MOVE_HORN_DRILL
+};
+
 static u8 GetBitIndices(u32 word, u16* indices)
 {
     u32 count = 0;
@@ -29,14 +45,15 @@ static u8 GetTmHmMoves(u16 species, u16* moves)
 {
     u8 moveCount1 = GetBitIndices(sTMHMLearnsets[species][0], moves);
     u8 moveCount2 = GetBitIndices(sTMHMLearnsets[species][1], &moves[moveCount1]);
+    u8 moveCountTotal = moveCount1 + moveCount2;
     u32 i;
     for (i = 0; i < moveCount1; i++) {
         moves[i] = sTMHMMoves[moves[i]];
     }
-    for (i = moveCount1; i < moveCount2; i++) {
+    for (i = moveCount1; i < moveCountTotal; i++) {
         moves[i] = sTMHMMoves[32+moves[i]];
     }
-    return moveCount1 + moveCount2;
+    return moveCountTotal;
 }
 
 static u8 GetTutorMoves(u16 species, u16* moves)
@@ -49,14 +66,40 @@ static u8 GetTutorMoves(u16 species, u16* moves)
     return moveCount;
 }
 
+static u16 BanMoves(const u16* bannedMoves, u16 bannedMoveCount, u16* moves, u16 moveCount)
+{
+    u32 deleteCount = 0;
+    u32 writeIndex = 0;
+    u32 readIndex;
+    for (readIndex = 0; readIndex < moveCount; readIndex++)
+    {
+        bool32 banned = FALSE;
+        u32 banIndex;
+        for (banIndex = 0; banIndex < bannedMoveCount; banIndex++) {
+            if (moves[readIndex] == bannedMoves[banIndex]) {
+                banned = TRUE;
+                break;
+            }
+        }
+        if (banned) {
+            deleteCount++;
+        } else {
+            moves[writeIndex] = moves[readIndex];
+            writeIndex++;
+        }
+    }
+    return deleteCount;
+}
+
 u16 RandomSpeciesMove(u16 species) {
     struct Pokemon pokemon;
     u16 moves[512];
     u16 moveCount = 0;
     moveCount += GetLevelUpMovesBySpecies(species, &moves[moveCount]);
     moveCount += GetTmHmMoves(species, &moves[moveCount]);
-    moveCount += GetTutorMoves(species, &moves[moveCount]);
+    // moveCount += GetTutorMoves(species, &moves[moveCount]);
     moveCount += GetEggMoves(species, &moves[moveCount]);
+    moveCount -= BanMoves(BANNED_MOVES, NELEMS(BANNED_MOVES), moves, moveCount);
     return moves[Random() % moveCount];
 }
 
