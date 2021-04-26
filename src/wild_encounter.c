@@ -290,7 +290,7 @@ static bool8 TryGenerateWildMon(const struct WildPokemonInfo * info, u8 area, u8
     {
         return FALSE;
     }
-    GenerateWildMon(randomSpecies(), level, slot);
+    GenerateWildMon(RandomSpecies(), level, slot);
     return TRUE;
 }
 

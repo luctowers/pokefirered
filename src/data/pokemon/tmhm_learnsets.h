@@ -1,3 +1,4 @@
+// stolen from src/data/part_menu.h
 static const u16 sTMHMMoves[] =
 {
     MOVE_FOCUS_PUNCH,

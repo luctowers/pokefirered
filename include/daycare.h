@@ -3,6 +3,7 @@
 
 #include "global.h"
 
+u8 GetEggMoves(u16 species, u16 *eggMoves);
 u8 *GetMonNick(struct Pokemon *mon, u8 *dest);
 u8 *GetBoxMonNick(struct BoxPokemon *mon, u8 *dest);
 u8 CountPokemonInDaycare(struct DayCare *daycare);

@@ -2246,7 +2246,7 @@ u16 MonTryLearningNewMove(struct Pokemon *mon, bool8 firstMove)
 
     if (firstMove) {
         do {
-            gMoveToLearn = randomSpeciesMove(species);
+            gMoveToLearn = RandomSpeciesMove(species);
             retVal = GiveMoveToMon(mon, gMoveToLearn);
             randomLearnAttempts++;
         } while (retVal == MON_ALREADY_KNOWS_MOVE && randomLearnAttempts < 256);
