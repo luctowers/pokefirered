@@ -4,6 +4,6 @@
 #include "global.h"
 
 u16 RandomSpecies();
-u16 RandomSpeciesMove(u16 species);
+u16 RandomSpeciesMove(struct Pokemon *mon);
 
 #endif // GUARD_RANDOMIZER_H

@@ -2241,17 +2241,12 @@ static void GiveBoxMonInitialMoveset(struct BoxPokemon *boxMon)
 u16 MonTryLearningNewMove(struct Pokemon *mon, bool8 firstMove)
 {
     u32 retVal = 0;
-    u32 randomLearnAttempts = 0;
-    u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-
     if (firstMove) {
-        do {
-            gMoveToLearn = RandomSpeciesMove(species);
+        gMoveToLearn = RandomSpeciesMove(mon);
+        if (gMoveToLearn) {
             retVal = GiveMoveToMon(mon, gMoveToLearn);
-            randomLearnAttempts++;
-        } while (retVal == MON_ALREADY_KNOWS_MOVE && randomLearnAttempts < 256);
+        }
     }
-
     return retVal;
 }
 
