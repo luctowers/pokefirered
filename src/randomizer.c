@@ -18,6 +18,10 @@ static const u16 BLOCKED_TMHM_MOVES[] = {
     MOVE_HIDDEN_POWER,
     MOVE_SECRET_POWER,
     MOVE_REST,
+    MOVE_FACADE,
+    MOVE_SUNNY_DAY,
+    MOVE_RAIN_DANCE,
+    MOVE_TOXIC,
     // HMS
     MOVE_FLASH,
     MOVE_FLY,
@@ -25,7 +29,8 @@ static const u16 BLOCKED_TMHM_MOVES[] = {
     MOVE_ROCK_SMASH,
     MOVE_CUT,
     MOVE_SURF,
-    MOVE_WATERFALL
+    MOVE_WATERFALL,
+    MOVE_DIVE
 };
 
 static const u16 BLOCKED_MOVES[] = {
@@ -34,14 +39,15 @@ static const u16 BLOCKED_MOVES[] = {
     MOVE_MINIMIZE,
 };
 
-static u8 GetBitIndices(u32 word, u16 *indices)
+static u32 GetBitIndices(u32 word, u16 *indices)
 {
     u32 count = 0;
     u32 i;
     for (i = 0; i < 32; i++)
     {
         u32 mask = 1 << i;
-        if (word & mask) {
+        if (word & mask)
+        {
             indices[count] = i;
             count++;
         }
@@ -49,62 +55,43 @@ static u8 GetBitIndices(u32 word, u16 *indices)
     return count;
 }
 
-static u8 GetTmHmMoves(u16 species, u16 *moves)
+static u32 GetTmHmMoves(u16 species, u16 *moves)
 {
-    u8 moveCount1 = GetBitIndices(sTMHMLearnsets[species][0], moves);
-    u8 moveCount2 = GetBitIndices(sTMHMLearnsets[species][1], &moves[moveCount1]);
-    u8 moveCountTotal = moveCount1 + moveCount2;
+    u32 moveCount1 = GetBitIndices(sTMHMLearnsets[species][0], moves);
+    u32 moveCount2 = GetBitIndices(sTMHMLearnsets[species][1], &moves[moveCount1]);
+    u32 moveCountTotal = moveCount1 + moveCount2;
     u32 i;
-    for (i = 0; i < moveCount1; i++) {
+    for (i = 0; i < moveCount1; i++)
+    {
         moves[i] = sTMHMMoves[moves[i]];
     }
-    for (i = moveCount1; i < moveCountTotal; i++) {
+    for (i = moveCount1; i < moveCountTotal; i++)
+    {
         moves[i] = sTMHMMoves[32+moves[i]];
     }
     return moveCountTotal;
 }
 
-// static u8 GetTutorMoves(u16 species, u16 *moves)
+// static u32 GetTutorMoves(u16 species, u16 *moves)
 // {
-//     u8 moveCount = GetBitIndices(sTutorLearnsets[species], moves);
+//     u32 moveCount = GetBitIndices(sTutorLearnsets[species], moves);
 //     u32 i;
-//     for (i = 0; i < moveCount; i++) {
+//     for (i = 0; i < moveCount; i++)
+//     {
 //         moves[i] = sTutorMoves[moves[i]];
 //     }
 //     return moveCount;
 // }
 
-static u16 RemoveMoves(const u16 *bannedMoves, u16 bannedMoveCount, u16 *moves, u16 moveCount)
+static u32 GetKnownMoves(struct BoxPokemon *boxMon, u16 *moves)
 {
-    u32 removeCount = 0;
-    u32 writeIndex = 0;
-    u32 readIndex;
-    for (readIndex = 0; readIndex < moveCount; readIndex++)
-    {
-        bool32 banned = FALSE;
-        u32 banIndex;
-        for (banIndex = 0; banIndex < bannedMoveCount; banIndex++) {
-            if (moves[readIndex] == bannedMoves[banIndex]) {
-                banned = TRUE;
-                break;
-            }
-        }
-        if (banned) {
-            removeCount++;
-        } else {
-            moves[writeIndex] = moves[readIndex];
-            writeIndex++;
-        }
-    }
-    return removeCount;
-}
-
-static u8 GetKnownMoves(struct Pokemon *mon, u16 *moves) {
     u8 moveCount = 0;
     u32 i;
-    for (i = 0; i < 4; i++) {
-        u16 move = GetBoxMonData(&mon->box, MON_DATA_MOVE1 + i, NULL);
-        if (move) {
+    for (i = 0; i < 4; i++)
+    {
+        u16 move = GetBoxMonData(boxMon, MON_DATA_MOVE1 + i, NULL);
+        if (move)
+        {
             moves[moveCount] = move;
             moveCount++;
         }
@@ -112,24 +99,131 @@ static u8 GetKnownMoves(struct Pokemon *mon, u16 *moves) {
     return moveCount;
 }
 
-u16 RandomSpeciesMove(struct Pokemon *mon) {
-    u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+static void ShuffleMoves(u16 seed, u16 *moves, u32 moveCount)
+{
+    u32 i;
+    SeedRng2(seed);
+    for (i = moveCount-1; i > 0; i--)
+    {
+        u32 j = Random2() % (i+1);
+        u16 temp = moves[i];
+        moves[i] = moves[j];
+        moves[j] = temp;
+    }
+}
+
+static void EnsureAttackingMoves(u16 *moves, u32 moveCount)
+{
+    u32 nonAttackingMoveIndices[4];
+    u32 nonAttackingMoveCount = 0;
+    u32 i;
+    if (moveCount < 5) {
+        return;
+    }
+    for (i = 0; i < 4; i++)
+    {
+        if (gBattleMoves[moves[i]].power == 0) {
+            nonAttackingMoveIndices[nonAttackingMoveCount] = i;
+            nonAttackingMoveCount++;
+        }
+    }
+    i = moveCount;
+    while (nonAttackingMoveCount > 2 && i >= 4) {
+        if (gBattleMoves[moves[i]].power != 0) {
+            u16 temp;
+            nonAttackingMoveCount--;
+            temp = moves[i];
+            moves[i] = moves[nonAttackingMoveIndices[nonAttackingMoveCount]];
+            moves[nonAttackingMoveIndices[nonAttackingMoveCount]] = temp;
+        }
+        i--;
+    }
+}
+
+static u32 FilterMoves(bool32 (*filter)(u16,void*), void *filterArgs, u16 *moves, u32 moveCount)
+{
+    u32 removeCount = 0;
+    u32 writeIndex = 0;
+    u32 readIndex;
+    for (readIndex = 0; readIndex < moveCount; readIndex++)
+    {
+        if (!filter(moves[readIndex], filterArgs))
+        {
+            removeCount++;
+        }
+        else 
+        {
+            moves[writeIndex] = moves[readIndex];
+            writeIndex++;
+        }
+    }
+    return removeCount;
+}
+
+struct RemoveMoveFilterArgs {
+    const u16 *removes;
+    u32 removeCount;
+};
+
+static bool32 RemoveMovesFilter(u16 move, void *args)
+{
+    struct RemoveMoveFilterArgs *typedArgs = (struct RemoveMoveFilterArgs*) args;
+    u32 i;
+    for (i = 0; i < typedArgs->removeCount; i++)
+    {
+        if (move == typedArgs->removes[i])
+        {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
+static u32 RemoveMoves(const u16 *removes, u8 removeCount, u16 *moves, u8 moveCount)
+{
+    struct RemoveMoveFilterArgs filterArgs = { removes, removeCount };
+    return FilterMoves(RemoveMovesFilter, &filterArgs, moves, moveCount);
+}
+
+u16 RandomMove(struct BoxPokemon *boxMon)
+{
+    u16 species = GetBoxMonData(boxMon, MON_DATA_SPECIES, NULL);
+    u16 metLevel = GetBoxMonData(boxMon, MON_DATA_MET_LEVEL, NULL);
+    u16 level = GetLevelFromBoxMonExp(boxMon);
     u16 knownMoves[4];
-    u16 knownMoveCount = GetKnownMoves(mon, knownMoves);
-    u16 moves[512];
-    u16 moveCount = 0;
+    u32 knownMoveCount = GetKnownMoves(boxMon, knownMoves);
+    u16 moves[256];
+    u32 moveCount = 0;
     moveCount += GetTmHmMoves(species, &moves[moveCount]);
     moveCount -= RemoveMoves(BLOCKED_TMHM_MOVES, NELEMS(BLOCKED_TMHM_MOVES), moves, moveCount);
-    moveCount += GetEggMoves(mon, &moves[moveCount]);
+    moveCount += GetEggMoves(boxMon, &moves[moveCount]);
     moveCount += GetLevelUpMovesBySpecies(species, &moves[moveCount]);
     // moveCount += GetTutorMoves(species, &moves[moveCount]);
-    moveCount -= RemoveMoves(knownMoves, knownMoveCount, moves, moveCount);
     moveCount -= RemoveMoves(BLOCKED_MOVES, NELEMS(BLOCKED_MOVES), moves, moveCount);
-    if (moveCount) {
-        return moves[Random() % moveCount];
-    } else {
-        return MOVE_NONE;
+    ShuffleMoves(boxMon->personality, moves, moveCount);
+    EnsureAttackingMoves(moves, moveCount);
+    if (knownMoveCount < 4 && moveCount > knownMoveCount) {
+        return moves[knownMoveCount];
+    } else if (moveCount) {
+        u16 move = moves[level-metLevel+3];
+        bool32 moveAlreadyKnown = FALSE;
+        u32 i;
+        for (i = 0; i < knownMoveCount; i++) {
+            if (knownMoves[i] == move) {
+                moveAlreadyKnown = TRUE;
+                break;
+            }
+        }
+        if (!moveAlreadyKnown) {
+            return move;
+        } else {
+            moveCount -= RemoveMoves(knownMoves, knownMoveCount, moves, moveCount);
+            if (moveCount) {
+                return moves[Random() % moveCount];
+            }
+        }
     }
+    return MOVE_NONE;
 }
 
 u16 RandomSpecies()

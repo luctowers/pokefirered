@@ -1522,6 +1522,7 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum)
     u32 nameHash = 0;
     u32 personalityValue;
     u8 fixedIV;
+    u8 level;
     s32 i, j;
 
     if (trainerNum == TRAINER_SECRET_BASE)
@@ -1541,11 +1542,47 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum)
                 personalityValue = 0x88;
             for (j = 0; gTrainers[trainerNum].trainerName[j] != EOS; ++j)
                 nameHash += gTrainers[trainerNum].trainerName[j];
-            for (j = 0; gSpeciesNames[partyData[i].species][j] != EOS; ++j)
-                nameHash += gSpeciesNames[partyData[i].species][j];
+            switch (gTrainers[trainerNum].partyFlags)
+            {
+            case 0:
+            {
+                const struct TrainerMonNoItemDefaultMoves *partyData = gTrainers[trainerNum].party.NoItemDefaultMoves;
+                level = partyData[i].lvl;
+                for (j = 0; gSpeciesNames[partyData[i].species][j] != EOS; ++j)
+                    nameHash += gSpeciesNames[partyData[i].species][j];
+                fixedIV = partyData[i].iv * 31 / 255;
+                break;
+            }
+            case F_TRAINER_PARTY_CUSTOM_MOVESET:
+            {
+                const struct TrainerMonNoItemCustomMoves *partyData = gTrainers[trainerNum].party.NoItemCustomMoves;
+                level = partyData[i].lvl;
+                for (j = 0; gSpeciesNames[partyData[i].species][j] != EOS; ++j)
+                    nameHash += gSpeciesNames[partyData[i].species][j];
+                fixedIV = partyData[i].iv * 31 / 255;
+                break;
+            }
+            case F_TRAINER_PARTY_HELD_ITEM:
+            {
+                const struct TrainerMonItemDefaultMoves *partyData = gTrainers[trainerNum].party.ItemDefaultMoves;
+                level = partyData[i].lvl;
+                for (j = 0; gSpeciesNames[partyData[i].species][j] != EOS; ++j)
+                    nameHash += gSpeciesNames[partyData[i].species][j];
+                fixedIV = partyData[i].iv * 31 / 255;
+                break;
+            }
+            case F_TRAINER_PARTY_CUSTOM_MOVESET | F_TRAINER_PARTY_HELD_ITEM:
+            {
+                const struct TrainerMonItemCustomMoves *partyData = gTrainers[trainerNum].party.ItemCustomMoves;
+                level = partyData[i].lvl;
+                for (j = 0; gSpeciesNames[partyData[i].species][j] != EOS; ++j)
+                    nameHash += gSpeciesNames[partyData[i].species][j];
+                fixedIV = partyData[i].iv * 31 / 255;
+                break;
+            }
+            }
             personalityValue += nameHash << 8;
-            fixedIV = partyData[i].iv * 31 / 255;
-            CreateMon(&party[i], RandomSpecies(), partyData[i].lvl, fixedIV, TRUE, personalityValue, OT_ID_RANDOM_NO_SHINY, 0);
+            CreateMon(&party[i], RandomSpecies(), level, fixedIV, TRUE, personalityValue, OT_ID_RANDOM_NO_SHINY, 0);
         }
         gBattleTypeFlags |= gTrainers[trainerNum].doubleBattle;
     }
