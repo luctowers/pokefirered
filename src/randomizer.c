@@ -228,7 +228,14 @@ u16 RandomMove(struct BoxPokemon *boxMon)
 
 u16 RandomSpecies()
 {
-    u16 species = 1 + Random() % 386;
+    return RandomSpeciesFromSeed(Random());
+}
+
+u16 RandomSpeciesFromSeed(u16 seed)
+{
+    u16 species;
+    SeedRng2(seed);
+    species = 1 + Random2() % 386;
     if (species >= SPECIES_CELEBI)
     {
         species += 25;

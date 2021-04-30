@@ -20,6 +20,7 @@
 #include "event_object_movement.h"
 #include "menu_indicators.h"
 #include "random.h"
+#include "randomizer.h"
 #include "mail_data.h"
 #include "help_system.h"
 #include "pokemon_storage_system.h"
@@ -2548,4 +2549,16 @@ static void Task_WingFlapSound(u8 taskId)
     }
     if (data[0] == gSpecialVar_0x8004 - 1)
         DestroyTask(taskId);
+}
+
+u16 GetFirstStarterSpecies() {
+    return RandomSpeciesFromSeed(gSaveBlock2Ptr->playerTrainerId[0] | (gSaveBlock2Ptr->playerTrainerId[1] << 8));
+}
+
+u16 GetSecondStarterSpecies() {
+    return RandomSpeciesFromSeed(gSaveBlock2Ptr->playerTrainerId[1] | (gSaveBlock2Ptr->playerTrainerId[2] << 8));
+}
+
+u16 GetThirdStarterSpecies() {
+    return RandomSpeciesFromSeed(gSaveBlock2Ptr->playerTrainerId[2] | (gSaveBlock2Ptr->playerTrainerId[3] << 8));
 }
