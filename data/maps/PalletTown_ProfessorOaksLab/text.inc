@@ -140,7 +140,7 @@ PalletTown_ProfessorOaksLab_Text_DeliveredOaksParcel:: @ 818E4AF
 
 PalletTown_ProfessorOaksLab_Text_OakCustomBallIOrdered:: @ 818E4CA
     .string "Ah! \n"
-    .string "It's the custom POKé BALL!\p"
+    .string "It's the custom MASTER BALLS!\p"
     .string "I had it on order.\n"
     .string "Thank you!$"
 
@@ -177,8 +177,8 @@ PalletTown_ProfessorOaksLab_Text_ReceivedFivePokeBalls:: @ 818E6B3
 PalletTown_ProfessorOaksLab_Text_OakExplainCatching:: @ 818E6D0
     .string "When a wild POKéMON appears,\n"
     .string "it's fair game.\p"
-    .string "Just throw a POKé BALL at it and\n"
-    .string "try to catch it!\p"
+    .string "Just throw a MASTER BALL at it\n"
+    .string "and it will be caught instantly!\p"
     .string "This won't always work, however.\p"
     .string "A healthy POKéMON can escape.\n"
     .string "You have to be lucky!$"
