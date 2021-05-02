@@ -14,6 +14,7 @@
 #include "math_util.h"
 #include "overworld.h"
 #include "random.h"
+#include "randomizer.h"
 #include "data.h"
 #include "constants/songs.h"
 
@@ -83,7 +84,7 @@ static void Task_OakSpeech41(u8 taskId);
 static void Task_OakSpeech42(u8 taskId);
 
 static void CB2_ReturnFromNamingScreen(void);
-static void CreateNidoranFSprite(u8 taskId);
+static void CreateRandomSprite(u8 taskId);
 static void CreatePikaOrGrassPlatformSpriteAndLinkToCurrentTask(u8 taskId, u8 state);
 static void DestroyLinkedPikaOrGrassPlatformSprites(u8 taskId, u8 state);
 static void LoadOaksSpeechTrainerPic(u16 whichPic, u16 tileOffset);
@@ -879,7 +880,7 @@ static void Task_OakSpeech9(u8 taskId)
         LoadBgTiles(1, sOakSpeechResources->solidColorsGfx, size, 0);
         CopyToBgTilemapBuffer(1, sOakSpeech_BackgroundTilemap, 0, 0);
         CopyBgTilemapBufferToVram(1);
-        CreateNidoranFSprite(taskId);
+        CreateRandomSprite(taskId);
         LoadOaksSpeechTrainerPic(3, 0);
         CreatePikaOrGrassPlatformSpriteAndLinkToCurrentTask(taskId, 1);
         PlayBGM(MUS_ROUTE24);
@@ -1614,13 +1615,14 @@ static void CB2_ReturnFromNamingScreen(void)
     gMain.state++;
 }
 
-static void CreateNidoranFSprite(u8 taskId)
+static void CreateRandomSprite(u8 taskId)
 {
     u8 spriteId;
+    u16 species = RandomSpecies();
 
-    DecompressPicFromTable(&gMonFrontPicTable[SPECIES_NIDORAN_F], OakSpeechNidoranFGetBuffer(0), SPECIES_NIDORAN_F);
-    LoadCompressedSpritePaletteUsingHeap(&gMonPaletteTable[SPECIES_NIDORAN_F]);
-    SetMultiuseSpriteTemplateToPokemon(SPECIES_NIDORAN_F, 0);
+    DecompressPicFromTable(&gMonFrontPicTable[species], OakSpeechNidoranFGetBuffer(0), species);
+    LoadCompressedSpritePaletteUsingHeap(&gMonPaletteTable[species]);
+    SetMultiuseSpriteTemplateToPokemon(species, 0);
     spriteId = CreateSprite(&gMultiuseSpriteTemplate, 0x60, 0x60, 1);
     gSprites[spriteId].callback = SpriteCallbackDummy;
     gSprites[spriteId].oam.priority = 1;
