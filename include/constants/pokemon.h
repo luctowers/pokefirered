@@ -113,6 +113,16 @@
 #define TYPE_DARK     0x11
 #define NUMBER_OF_MON_TYPES     0x12
 
+// Pokemon Tiers
+
+#define TIER_LC   0
+#define TIER_NFE  1
+#define TIER_NU   2
+#define TIER_UU   3
+#define TIER_UUBL 4
+#define TIER_OU   5
+#define TIER_UBER 6
+
 // Pokemon egg groups
 #define EGG_GROUP_NONE 0
 #define EGG_GROUP_MONSTER 1

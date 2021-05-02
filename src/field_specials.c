@@ -34,6 +34,7 @@
 #include "party_menu.h"
 #include "dynamic_placeholder_text_util.h"
 #include "new_menu_helpers.h"
+#include "pokedex_screen.h"
 #include "constants/songs.h"
 #include "constants/items.h"
 #include "constants/maps.h"
@@ -2551,14 +2552,36 @@ static void Task_WingFlapSound(u8 taskId)
         DestroyTask(taskId);
 }
 
+static const u8 sStarterTierStrings[][25] = {
+    [TIER_LC] = _("quite weak until evolved"),
+    [TIER_NFE] = _("quite weak until evolved"),
+    [TIER_NU] = _("very weak sadly"),
+    [TIER_UU] = _("good, but not great"),
+    [TIER_UUBL] = _("quite strong"),
+    [TIER_OU] = _("very strong"),
+    [TIER_UBER] = _("incredibly strong")
+};
+
+static void SetStarterInfoStrings(u16 species) {
+    StringCopy(gStringVar1, sStarterTierStrings[gSmogonTiers[species]]);
+    StringCopy10(gStringVar2, gSpeciesNames[species]);
+    StringCopy(gStringVar3, gPokedexEntries[SpeciesToNationalPokedexNum(species)].categoryName);
+}
+
 u16 GetFirstStarterSpecies() {
-    return RandomSpeciesFromSeed(gSaveBlock2Ptr->playerTrainerId[0] | (gSaveBlock2Ptr->playerTrainerId[1] << 8));
+    u16 species = RandomSpeciesFromSeed(gSaveBlock2Ptr->playerTrainerId[0] | (gSaveBlock2Ptr->playerTrainerId[1] << 8));
+    SetStarterInfoStrings(species);
+    return species;
 }
 
 u16 GetSecondStarterSpecies() {
-    return RandomSpeciesFromSeed(gSaveBlock2Ptr->playerTrainerId[1] | (gSaveBlock2Ptr->playerTrainerId[2] << 8));
+    u16 species = RandomSpeciesFromSeed(gSaveBlock2Ptr->playerTrainerId[1] | (gSaveBlock2Ptr->playerTrainerId[2] << 8));
+    SetStarterInfoStrings(species);
+    return species;
 }
 
 u16 GetThirdStarterSpecies() {
-    return RandomSpeciesFromSeed(gSaveBlock2Ptr->playerTrainerId[2] | (gSaveBlock2Ptr->playerTrainerId[3] << 8));
+    u16 species = RandomSpeciesFromSeed(gSaveBlock2Ptr->playerTrainerId[2] | (gSaveBlock2Ptr->playerTrainerId[3] << 8));
+    SetStarterInfoStrings(species);
+    return species;
 }

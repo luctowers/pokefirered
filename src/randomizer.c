@@ -22,6 +22,7 @@ static const u16 BLOCKED_TMHM_MOVES[] = {
     MOVE_SUNNY_DAY,
     MOVE_RAIN_DANCE,
     MOVE_TOXIC,
+    MOVE_HYPER_BEAM,
     // HMS
     MOVE_FLASH,
     MOVE_FLY,
@@ -235,10 +236,12 @@ u16 RandomSpeciesFromSeed(u16 seed)
 {
     u16 species;
     SeedRng2(seed);
-    species = 1 + Random2() % 386;
-    if (species >= SPECIES_CELEBI)
-    {
-        species += 25;
-    }
+    do {
+        species = 1 + Random2() % 386;
+        if (species >= SPECIES_CELEBI)
+        {
+            species += 25;
+        }
+    } while (gSmogonTiers[species] == TIER_UBER);
     return species;
 }

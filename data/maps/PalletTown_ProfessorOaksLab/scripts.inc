@@ -1180,7 +1180,7 @@ PalletTown_ProfessorOaksLab_EventScript_ConfirmStarterChoice:: @ 8169BE1
 	end
 
 PalletTown_ProfessorOaksLab_EventScript_ConfirmBulbasaur:: @ 8169C14
-	msgbox PalletTown_ProfessorOaksLab_Text_OakChoosingBulbasaur, MSGBOX_YESNO
+	msgbox PalletTown_ProfessorOaksLab_Text_OakChoosingStarter, MSGBOX_YESNO
 	compare VAR_RESULT, YES
 	goto_if_eq PalletTown_ProfessorOaksLab_EventScript_ChoseStarter
 	compare VAR_RESULT, NO
@@ -1188,7 +1188,7 @@ PalletTown_ProfessorOaksLab_EventScript_ConfirmBulbasaur:: @ 8169C14
 	end
 
 PalletTown_ProfessorOaksLab_EventScript_ConfirmSquirtle:: @ 8169C33
-	msgbox PalletTown_ProfessorOaksLab_Text_OakChoosingSquirtle, MSGBOX_YESNO
+	msgbox PalletTown_ProfessorOaksLab_Text_OakChoosingStarter, MSGBOX_YESNO
 	compare VAR_RESULT, YES
 	goto_if_eq PalletTown_ProfessorOaksLab_EventScript_ChoseStarter
 	compare VAR_RESULT, NO
@@ -1196,7 +1196,7 @@ PalletTown_ProfessorOaksLab_EventScript_ConfirmSquirtle:: @ 8169C33
 	end
 
 PalletTown_ProfessorOaksLab_EventScript_ConfirmCharmander:: @ 8169C52
-	msgbox PalletTown_ProfessorOaksLab_Text_OakChoosingCharmander, MSGBOX_YESNO
+	msgbox PalletTown_ProfessorOaksLab_Text_OakChoosingStarter, MSGBOX_YESNO
 	compare VAR_RESULT, YES
 	goto_if_eq PalletTown_ProfessorOaksLab_EventScript_ChoseStarter
 	compare VAR_RESULT, NO
