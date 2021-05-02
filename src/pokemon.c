@@ -5803,24 +5803,16 @@ void SetMonPreventsSwitchingString(void)
     BattleStringExpandPlaceholders(gText_PkmnsXPreventsSwitching, gStringVar4);
 }
 
-void SetWildMonHeldItem(void)
+void SetRandomHeldItems(void)
 {
-    if (!(gBattleTypeFlags & (BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_LEGENDARY | BATTLE_TYPE_TRAINER)))
+    if (!(gBattleTypeFlags & (BATTLE_TYPE_POKEDUDE | BATTLE_TYPE_LEGENDARY)))
     {
-        u16 rnd = Random() % 100;
-        u16 species = GetMonData(&gEnemyParty[0], MON_DATA_SPECIES, NULL);
-        if (gBaseStats[species].item1 == gBaseStats[species].item2)
+        volatile u32 i;
+        CalculateEnemyPartyCount();
+        for (i = 0; i < gEnemyPartyCount; i++)
         {
-            SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, &gBaseStats[species].item1);
-            return;
-        }
-
-        if (rnd > 44)
-        {
-            if (rnd <= 94)
-                SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, &gBaseStats[species].item1);
-            else
-                SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, &gBaseStats[species].item2);
+            u16 heldItem = RandomHeldItem();
+            SetMonData(&gEnemyParty[i], MON_DATA_HELD_ITEM, &heldItem);
         }
     }
 }

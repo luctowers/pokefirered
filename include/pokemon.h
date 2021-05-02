@@ -442,7 +442,7 @@ bool8 IsOtherTrainer(u32 otId, u8 *otName);
 void MonRestorePP(struct Pokemon *mon);
 void BoxMonRestorePP(struct BoxPokemon *boxMon);
 void SetMonPreventsSwitchingString(void);
-void SetWildMonHeldItem(void);
+void SetRandomHeldItems(void);
 bool8 IsMonShiny(struct Pokemon *mon);
 u8 *GetTrainerPartnerName(void);
 u8 GetPlayerPartyHighestLevel(void);

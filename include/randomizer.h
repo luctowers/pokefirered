@@ -6,5 +6,6 @@
 u16 RandomSpecies();
 u16 RandomSpeciesFromSeed(u16 seed);
 u16 RandomMove(struct BoxPokemon *boxMon);
+u16 RandomHeldItem();
 
 #endif // GUARD_RANDOMIZER_H

@@ -4,6 +4,7 @@
 #include "mystery_event_script.h"
 #include "event_data.h"
 #include "random.h"
+#include "randomizer.h"
 #include "item.h"
 #include "overworld.h"
 #include "field_screen_effect.h"
@@ -1743,7 +1744,7 @@ bool8 ScrCmd_givemon(struct ScriptContext * ctx)
 {
     u16 species = VarGet(ScriptReadHalfword(ctx));
     u8 level = ScriptReadByte(ctx);
-    u16 item = VarGet(ScriptReadHalfword(ctx));
+    u16 item = RandomHeldItem();
     u32 unkParam1 = ScriptReadWord(ctx);
     u32 unkParam2 = ScriptReadWord(ctx);
     u8 unkParam3 = ScriptReadByte(ctx);
