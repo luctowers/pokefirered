@@ -19,7 +19,7 @@ PalletTown_ProfessorOaksLab_Text_RivalIllTakeThisOneThen:: @ 818DD34
     .string "{RIVAL}: I'll take this one, then!$"
 
 PalletTown_ProfessorOaksLab_Text_RivalReceivedMonFromOak:: @ 818DD52
-    .string "{RIVAL} received the RANDOMIZED\n"
+    .string "{RIVAL} received a RANDOMIZED\n"
     .string "POKéMON from PROF. OAK!$"
 
 PalletTown_ProfessorOaksLab_Text_RivalMyMonLooksTougher:: @ 818DD75
@@ -34,7 +34,7 @@ PalletTown_ProfessorOaksLab_Text_RivalLetsCheckOutMons:: @ 818DDA4
 PalletTown_ProfessorOaksLab_Text_RivalDefeat:: @ 818DDEA
     .string "WHAT?\n"
     .string "Unbelievable!\l"
-    .string "I picked the wrong POKéMON!$"
+    .string "LUCAS gave me the wrong POKéMON!$"
 
 @ Also used for early Route 22 battle
 Text_RivalVictory:: @ 818DE1A
@@ -172,7 +172,7 @@ PalletTown_ProfessorOaksLab_Text_OakCatchMonsForDataTakeThese:: @ 818E612
     .string "catching wild POKéMON.$"
 
 PalletTown_ProfessorOaksLab_Text_ReceivedFivePokeBalls:: @ 818E6B3
-    .string "{PLAYER} received five POKé BALLS.$"
+    .string "{PLAYER} received five MASTER BALLS.$"
 
 PalletTown_ProfessorOaksLab_Text_OakExplainCatching:: @ 818E6D0
     .string "When a wild POKéMON appears,\n"
