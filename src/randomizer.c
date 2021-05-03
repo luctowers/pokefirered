@@ -313,7 +313,7 @@ u16 RandomSpeciesFromSeed(u16 seed)
     SeedRng2(seed);
     do {
         species = 1 + Random2() % 386;
-        if (species >= SPECIES_CELEBI)
+        if (species > SPECIES_CELEBI)
         {
             species += 25;
         }
