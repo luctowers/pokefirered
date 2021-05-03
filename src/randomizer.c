@@ -281,7 +281,7 @@ u16 RandomMove(struct BoxPokemon *boxMon)
     if (knownMoveCount < 4 && moveCount > knownMoveCount) {
         return moves[knownMoveCount];
     } else if (moveCount) {
-        u16 move = moves[level-metLevel+3];
+        u16 move = moves[(level-metLevel+3)%moveCount];
         bool32 moveAlreadyKnown = FALSE;
         u32 i;
         for (i = 0; i < knownMoveCount; i++) {
